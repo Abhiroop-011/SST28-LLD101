@@ -3,13 +3,16 @@ public class SmsSender extends NotificationSender {
 
     @Override
     protected void doSend(Notification n) {
-        // Ignores subject; base type doesn't clarify expectations (smell)
-        System.out.println("SMS -> to=" + n.phone + " body=" + n.body);
+        //We will preserve the subject by concatenating it!
+        String fullMessage = n.body;
+        if (n.subject != null && !n.subject.isEmpty()) {
+            fullMessage = "[" + n.subject + "] " + n.body;
+        }
+
+        System.out.println("SMS -> to=" + n.phone + " body=" + fullMessage);
         audit.add("sms sent");
     }
 
     @Override
-    protected String senderId() {
-        return "SMS";
-    }
+    protected String senderId() { return "SMS"; }
 }

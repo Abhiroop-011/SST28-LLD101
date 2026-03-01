@@ -3,7 +3,7 @@ public class EmailSender extends NotificationSender {
 
     @Override
     protected void doSend(Notification n) {
-        // Keep meaning intact: no silent truncation.
+        // No truncation.
         System.out.println("EMAIL -> to=" + n.email + " subject=" + n.subject + " body=" + n.body);
         audit.add("email sent");
     }

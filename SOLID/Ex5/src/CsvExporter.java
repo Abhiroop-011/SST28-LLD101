@@ -1,8 +1,8 @@
 import java.nio.charset.StandardCharsets;
-
-public class CsvExporter implements Exporter {
+public class CsvExporter extends Exporter {
     @Override
-    public ExportResult export(ExportRequest req) {
+    protected ExportResult doExport(ExportRequest req) {
+        // wrapping commas and newlines in quotes to avoid CSV parsing issues
         String body = req.body == null ? "" : req.body;
         if (body.contains(",") || body.contains("\n")) {
             body = "\"" + body.replace("\"", "\"\"") + "\""; 
@@ -11,3 +11,4 @@ public class CsvExporter implements Exporter {
         return new ExportResult("text/csv", csv.getBytes(StandardCharsets.UTF_8));
     }
 }
+        

@@ -7,11 +7,11 @@ public class Main {
 
         NotificationSender email = new EmailSender(audit);
         NotificationSender sms = new SmsSender(audit);
-        NotificationSender wa = new E164ValidatingWhatsAppSender(new WhatsAppSender(audit), audit);
+        NotificationSender wa = new WhatsAppSender(audit);
 
         email.send(n);
         sms.send(n);
-        wa.send(n);
+        wa.send(n); 
 
         System.out.println("AUDIT entries=" + audit.size());
     }
