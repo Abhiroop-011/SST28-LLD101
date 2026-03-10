@@ -49,3 +49,14 @@ RECEIPT: R-501 | fare=90.00
 
 ## 10. Stretch goals
 - Add a “mock” allocator and gateway for tests without touching booking logic.
+
+
+Eliminated Hard-Coding: No more new PaymentGateway() inside the business logic.
+
+Plug-and-Play Testing: If you want to test the pricing logic without actually charging a real credit card, you can pass a MockPaymentGateway to the constructor.
+
+Future-Proofing: If the campus switches from "Driver Allocation" to "Self-Driving Pods," you just create a PodAllocator class and swap it in Main. The TransportBookingService doesn't change a single line of code.
+
+Separation of Concerns: The service handles the flow of the booking, while the interfaces handle the details of the infrastructure.
+
+Clean Boundaries: The business logic is now "Pure." It describes what should happen, not how to talk to specific hardware or APIs.

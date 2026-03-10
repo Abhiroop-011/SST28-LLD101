@@ -51,3 +51,14 @@ FINAL: PASS (total=90)
 
 ## 10. Stretch goals
 - Add a second grading strategy without editing pipeline logic.
+
+
+It states that High-level modules (your business logic) should not depend on Low-level modules (your database, file system, or specific APIs). Both should depend on Abstractions (Interfaces).
+
+Decoupling: If you want to change the ReportWriter to save to a Database instead of a .txt file, you don't have to touch a single line of code in EvaluationPipeline. You just create a DatabaseReportWriter and plug it in via Main.
+
+Testability: In a real job, "Plagiarism Checking" might take 10 minutes and cost money (API calls). With DIP, you can pass a "Fake" checker to the pipeline during testing that returns 0 instantly.
+
+Open/Closed Principle: You can add a SeniorGradingStrategy (the stretch goal) by creating a new class that implements ICodeGrader. The pipeline is "Closed" for modification but "Open" for new grading behaviors.
+
+No More "Hard-Coded" Paths: By moving the Rubric and ReportWriter instantiation out of the pipeline, you can now configure them (like setting the bonus points) before the pipeline even starts.

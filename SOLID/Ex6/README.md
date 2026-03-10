@@ -50,3 +50,10 @@ AUDIT entries=3
 
 ## 10. Stretch goals
 - Add a new sender without editing existing ones.
+
+
+No Fat Interfaces: Devices only implement what they can actually do.
+
+True Decoupling: The Controller has absolutely no idea that a "Projector" or "AirConditioner" exists. It just knows it has "things that control temperature" and "things that take HDMI input."
+
+The OCP Stretch Goal: If you add a SmartBoard to the registry tomorrow, you do not have to touch this controller code at all. The getAllDevices loop will automatically find it and turn it off at the end of class!

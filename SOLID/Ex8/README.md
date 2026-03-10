@@ -50,3 +50,13 @@ Summary: ledgerBalance=5000, minutes=1, events=1
 
 ## 10. Stretch goals
 - Add “publicity lead” without implementing finance methods.
+
+No Fat Interface: We replaced one giant interface with three specialized ones.
+
+No Dummy Impls: Every method in TreasurerTool actually does something. There's no more "dead code."
+
+Minimal Dependencies: ClubConsole treats the treasurer as a FinanceTools object. It couldn't accidentally call addMinutes() on the treasurer even if it wanted to—the compiler wouldn't allow it.
+
+Safety: If you add a "Publicity Lead" (the stretch goal), you just create a PublicityTools interface. You don't have to touch the Budget or Minutes code.
+
+Clear Capabilities: By looking at the interface name (FinanceTools), you immediately know exactly what that object is capable of doing.
