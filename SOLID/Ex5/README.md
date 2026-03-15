@@ -55,3 +55,25 @@ JSON: OK bytes=61
 
 ## 10. Stretch goals
 - Add a new exporter without changing existing exporters.
+
+
+
+
+My Implementation - The previous design is aviolating of Liskov Substitution Principle (LSP). here is why:
+
+JsonExporter (Inconsistent Contract): If the client passes a null request, this exporter arbitrarily decides to return an empty byte array. It made up its own rule for null handling, which surprises the client.
+
+CsvExporter (Data Corruption): To avoid breaking the CSV format, this class silently deletes newlines and commas from the data. It changes the meaning of the data behind the client's back, which is incredibly dangerous.
+
+PdfExporter (Tightening Preconditions): This exporter throws an IllegalArgumentException if the text is over 20 characters long. The base class never warned the client that length was a constraint.
+
+Because of these inconsistencies, the client cannot trust the base Exporter type. To be safe, the client would have to use if-statements to check which specific format it's dealing with, which defeats the entire purpose of polymorphism."
+
+
+Step 1: In the abstract Exporter class, I made export() a final method. This method now enforces a universal rule: if the request is null, it throws a standard, predictable exception. Now, subclasses like JsonExporter don't have to guess how to handle nulls. The base class guarantees a uniform response, and then delegates the rest of the work to a protected doExport() method.
+
+Step 2: Isolating Validation. For the PDF size limit, I used the Strategy Pattern. I created an ExportValidator interface and a PdfValidator class. Inside the PdfExporter, I instantiate this validator. When doExport() is called, the PdfExporter simply delegates the size check to the validator before doing its work.
+
+Step 3: Fixing the Formats. Finally, I fixed the data corruption in the other subclasses inside their doExport() methods. CsvExporter now uses proper RFC standard CSV escaping—wrapping text in quotes—instead of silently deleting characters. JsonExporter properly escapes newlines.
+
+The client now gets predictable, reliable behavior across all formats."

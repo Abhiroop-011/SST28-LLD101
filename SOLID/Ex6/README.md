@@ -52,8 +52,33 @@ AUDIT entries=3
 - Add a new sender without editing existing ones.
 
 
-No Fat Interfaces: Devices only implement what they can actually do.
+My Implementation:
+"This initial design is a violation of the Liskov Substitution Principle (LSP). LSP states that objects of a superclass should be replaceable with objects of its subclasses without breaking the application. Let's see why this fails:
 
-True Decoupling: The Controller has absolutely no idea that a "Projector" or "AirConditioner" exists. It just knows it has "things that control temperature" and "things that take HDMI input."
+EmailSender (Changing Semantics): It silently truncates the message body if it exceeds 40 characters. The base contract doesn't warn the user about this. We are changing the meaning of the operation behind the client's back.
 
-The OCP Stretch Goal: If you add a SmartBoard to the registry tomorrow, you do not have to touch this controller code at all. The getAllDevices loop will automatically find it and turn it off at the end of class!
+SmsSender (Ignoring Fields): It completely ignores the subject field of the Notification. If the base class passes a subject, the subclass should honor it, not throw data into a black hole.
+
+WhatsAppSender (Tightening Preconditions): This is the biggest offender. It enforces a new rule—that the phone number must start with a '+'—and throws a RuntimeException if it doesn't. Because the base class doesn't define this exception, the client (Main.java) was forced to write a specific try-catch block only for WhatsApp.
+
+-> If the caller has to use if-statements or custom try-catch blocks because they know the specific type of the subclass, your abstraction has failed. The inheritance is misused.
+
+
+
+Step 1: The Template Method. In my abstract NotificationSender, made the send() method final. Subclasses cannot override it anymore. Inside this send() method, has put a standard try-catch block. It calls a new protected, abstract method called doSend(). If doSend() throws an exception, the base class catches it and logs the failure to the AuditLog.
+
+Step 2: Fixing the Implementations. > * EmailSender now implements doSend() and no longer truncates the string.
+
+SmsSender now prepends the Subject to the Body, honoring the data passed to it.
+
+Step 3: Isolating Validation. For WhatsApp, I created a NotificationValidator interface and a WhatsAppValidator implementation. The WhatsAppSender delegates validation to this class. If validation fails, it throws an exception, but remember: our base class is now catching it!
+
+The Result: In our new Main class. The custom try-catch around the WhatsApp sender is gone! The client just calls email.send(), sms.send(), wa.send(). It is completely ignorant of the underlying implementation details. Substitutability is restored.
+
+
+
+LSP : Subclasses no longer tighten preconditions or surprise the client with unhandled exceptions.
+
+Open/Closed Principle (OCP): If we want to add a TelegramSender tomorrow, we simply extend the base class and implement doSend(). We don't have to touch the Main class or the base class error handling.
+
+Single Responsibility Principle (SRP): Validation logic is cleanly decoupled from the transmission logic.

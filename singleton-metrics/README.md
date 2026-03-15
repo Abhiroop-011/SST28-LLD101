@@ -80,7 +80,6 @@ Step 2: Fixing Thread Safety (Double-Checked Locking)The Action: We implemented 
 Step 3: Defeating the Reflection Attack
 The Action: We added a guard clause inside the private constructor: if (INSTANCE != null) throw new IllegalStateException();
 
-
 The Why: Reflection can bypass private modifiers. We can't stop Reflection from calling the constructor, but we can make the constructor self-destruct.
 
 The Goal: Guarantee that even if an attacker hacks the access modifiers, the JVM will throw a fatal error rather than allowing a second instance to exist.

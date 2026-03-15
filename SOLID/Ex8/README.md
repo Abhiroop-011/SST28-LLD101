@@ -51,6 +51,8 @@ Summary: ledgerBalance=5000, minutes=1, events=1
 ## 10. Stretch goals
 - Add “publicity lead” without implementing finance methods.
 
+
+
 No Fat Interface: We replaced one giant interface with three specialized ones.
 
 No Dummy Impls: Every method in TreasurerTool actually does something. There's no more "dead code."
